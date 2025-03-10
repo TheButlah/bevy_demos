@@ -1,0 +1,12 @@
+[package]
+name = "spinning_cube"
+version = "0.0.0"
+description = "Self-custodial identity using did:web"
+publish = false
+
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]

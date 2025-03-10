@@ -1,0 +1,35 @@
+[workspace]
+resolver = "3"
+members = [
+	"spinning_cube"
+]
+
+# These settings will apply to all members of the workspace that opt in to them
+[workspace.package]
+version = "0.0.0"
+license = "MIT-0 OR Apache-2.0"
+repository = "https://github.com/TheButlah/bevy_demos"
+edition = "2024"
+rust-version = "1.85.0"
+
+[profile.dev]
+# Enable a small amount of optimization in debug mode
+opt-level = 1
+
+[profile.dev.package."*"]
+# Enable high optimizations for dependencies, but not for our code:
+opt-level = 2
+
+# What we use when producing artifacts to distribute, size matters more than speed
+[profile.artifact]
+inherits = "release"
+lto = true
+strip = true
+debug = false
+
+# What we use when producing artifacts in PRs, speed matters more than size
+[profile.artifact-dev]
+inherits = "dev"
+strip = true
+debug = false
+
