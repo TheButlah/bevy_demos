@@ -57,21 +57,22 @@ jobs:
   build:
     name: Build Binaries
     env:
-      LINUX: x86_64-unknown-linux-musl 
-      LINUX_ARM: aarch64-unknown-linux-musl 
+      LINUX: x86_64-unknown-linux-gnu 
+      LINUX_ARM: aarch64-unknown-linux-gnu 
       WINDOWS: x86_64-pc-windows-gnu 
       MACOS: aarch64-apple-darwin
+      WEB: wasm32-unknown-unknown
     # We run the jobs with a matrix, because currently we don't support cross
     # compilation to macos unless your'e already on macos. And mac runners are
     # expensive, so we choose to only run the builds for targets on the mac runners.
     strategy:
       matrix:
         runner-vars:
-          - runs-on: macos-14
+          - runs-on: macos-15
             host-triple: aarch64-apple-darwin
             artifact-name: rust-macos
           - runs-on: ubuntu-24.04
-            host-triple: x86_64-unknown-linux-musl
+            host-triple: x86_64-unknown-linux-gnu
             artifact-name: rust-linux
     runs-on: ${{ matrix.runner-vars.runs-on }}
     steps:
@@ -91,7 +92,7 @@ jobs:
         run: |
           case "${{ matrix.runner-vars.host-triple }}" in
             "${LINUX}" | "${LINUX_ARM}")
-              target_array=("${LINUX}" "${LINUX_ARM}" "${WINDOWS}") ;;
+              target_array=("${LINUX}" "${LINUX_ARM}" "${WINDOWS}" "${WEB}") ;;
             "${MACOS}")
               target_array=("${MACOS}") ;;
             *)
@@ -136,6 +137,9 @@ jobs:
                 mv "${f}" "artifacts/${component}-windows-x86_64.exe" ;;
               "${MACOS}")
                 mv "${f}" "artifacts/${component}-macos-aarch64" ;;
+              "${WEB}")
+                # TODO: Check that this works
+                mv "${f}" "artifacts/${component}-wasm32-web.wasm" ;;
               *)
                 echo "Unexpected target triple"
                 exit 1 ;;
